@@ -9,10 +9,10 @@ interface Props {
 
 export function AvatarMenu({ profile, open, onToggle, onOpenSettings }: Props) {
   return (
-    <div className="no-drag" style={{ position: 'relative' }}>
+    <>
       <button
         type="button"
-        className="avatar-btn"
+        className="neon-chip avatar-btn"
         aria-label="Account menu"
         onClick={onToggle}
       >
@@ -25,7 +25,7 @@ export function AvatarMenu({ profile, open, onToggle, onOpenSettings }: Props) {
         )}
       </button>
       {open && (
-        <div className="menu-pop" role="menu">
+        <div className="menu-pop no-drag" role="menu">
           {profile.signedIn ? (
             <>
               <div style={{ padding: '8px 12px', fontSize: 12, opacity: 0.7 }}>
@@ -60,6 +60,6 @@ export function AvatarMenu({ profile, open, onToggle, onOpenSettings }: Props) {
           </button>
         </div>
       )}
-    </div>
+    </>
   )
 }

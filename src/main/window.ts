@@ -2,8 +2,8 @@ import { BrowserWindow, screen } from 'electron'
 import { join } from 'path'
 import { getSettings, setSettings } from './store'
 
-const OVERLAY_WIDTH = 720
-const OVERLAY_HEIGHT = 280
+const OVERLAY_WIDTH = 880
+const OVERLAY_HEIGHT = 300
 
 let overlayWindow: BrowserWindow | null = null
 

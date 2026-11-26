@@ -23,6 +23,8 @@ function formatTime(sec: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`
 }
 
+const WAVE = [8, 14, 22, 16, 26, 12, 20, 28, 18, 24, 11, 19, 27, 15, 21, 10, 17, 25, 13, 23]
+
 export default function App() {
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS)
   const [profile, setProfile] = useState<ProfileInfo>({
@@ -38,7 +40,6 @@ export default function App() {
   const [tracks, setTracks] = useState<TrackItem[]>([])
   const [loading, setLoading] = useState(false)
   const switching = useRef(false)
-  const shellRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     void window.ytm.getSettings().then(setSettings)
@@ -126,11 +127,12 @@ export default function App() {
     const target = e.target as HTMLElement
     if (target.closest('.drawer') || target.closest('.arc-nav')) return
     if (drawerMode !== 'closed') closeDrawer()
-    if (!target.closest('.avatar-btn') && !target.closest('.menu-pop')) {
+    if (
+      !target.closest('.avatar-btn') &&
+      !target.closest('.menu-pop') &&
+      !target.closest('.satellites')
+    ) {
       setMenuOpen(false)
-    }
-    if (!target.closest('.settings-panel') && !target.closest('.menu-pop')) {
-      // keep settings open until Close
     }
   }
 
@@ -139,75 +141,80 @@ export default function App() {
       ? (nowPlaying.positionSec / nowPlaying.durationSec) * 100
       : 0
 
-  const waveHeights = [10, 16, 22, 14, 18, 12, 20, 15, 19, 11]
-
   return (
-    <div className="app-shell" ref={shellRef} onClick={onShellClick}>
-      <div className="overlay-row drag">
+    <div className="app-shell" onClick={onShellClick}>
+      <div className="hud drag">
         <ArcNav active={drawerSource} onSelect={onArcSelect} />
-        <div className={`frame${settings.translucencyEnabled ? '' : ' solid'}`}>
-          <div className="chrome-top no-drag">
-            <button
-              type="button"
-              className={`pin-btn${settings.pinned ? ' pinned' : ''}`}
-              aria-label={settings.pinned ? 'Unpin overlay' : 'Pin overlay'}
-              title={settings.pinned ? 'Pinned' : 'Pin'}
-              onClick={() => void window.ytm.setPinned(!settings.pinned)}
-            >
-              <IconPin />
-            </button>
-            <AvatarMenu
-              profile={profile}
-              open={menuOpen}
-              onToggle={() => setMenuOpen((v) => !v)}
-              onOpenSettings={() => setSettingsOpen(true)}
-            />
-          </div>
 
-          <div className="disc-wrap">
-            <div className={`disc${nowPlaying.isPlaying ? ' spinning' : ''}`}>
-              {nowPlaying.albumArtUrl && (
-                <img src={nowPlaying.albumArtUrl} alt="" draggable={false} />
-              )}
+        <div className={`body${settings.translucencyEnabled ? '' : ' solid'}`}>
+          <div className="chamber left">
+            <div className="disc-wrap">
+              <div className={`disc${nowPlaying.isPlaying ? ' spinning' : ''}`}>
+                {nowPlaying.albumArtUrl && (
+                  <img src={nowPlaying.albumArtUrl} alt="" draggable={false} />
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="now-playing">
-            <div className="eyebrow">Now Playing</div>
-            <div className="title">{nowPlaying.title}</div>
-            <div className="artist">{nowPlaying.artist}</div>
-            <div className="source-row">
-              <span className="yt-mark" aria-hidden>
-                ▶
-              </span>
-              YouTube Music
-            </div>
+          <div className="bridge">
             <div className="waveform" aria-hidden>
-              {waveHeights.map((h, i) => (
+              {WAVE.map((h, i) => (
                 <span key={i} style={{ height: h }} />
               ))}
             </div>
-            <div className="time-row">
-              {formatTime(nowPlaying.positionSec)} / {formatTime(nowPlaying.durationSec)}
-            </div>
-            <div
-              className="progress no-drag"
-              role="slider"
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={Math.round(progress)}
-              tabIndex={0}
-              onClick={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect()
-                const ratio = (e.clientX - rect.left) / rect.width
-                void window.ytm.seek(ratio)
-              }}
-            >
-              <div style={{ width: `${progress}%` }} />
+            <div className="now-playing">
+              <div className="eyebrow">Now Playing</div>
+              <div className="title">{nowPlaying.title}</div>
+              <div className="artist">{nowPlaying.artist}</div>
+              <div className="source-row">
+                <span className="yt-mark" aria-hidden>
+                  ▶
+                </span>
+                YouTube Music
+              </div>
+              <div className="time-row">
+                {formatTime(nowPlaying.positionSec)} / {formatTime(nowPlaying.durationSec)}
+              </div>
+              <div
+                className="progress no-drag"
+                role="slider"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(progress)}
+                tabIndex={0}
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect()
+                  const ratio = (e.clientX - rect.left) / rect.width
+                  void window.ytm.seek(ratio)
+                }}
+              >
+                <div style={{ width: `${progress}%` }} />
+              </div>
             </div>
           </div>
 
-          <TransportPad nowPlaying={nowPlaying} />
+          <div className="chamber right">
+            <TransportPad nowPlaying={nowPlaying} />
+          </div>
+        </div>
+
+        <div className="satellites no-drag">
+          <button
+            type="button"
+            className={`neon-chip pin-btn${settings.pinned ? ' pinned' : ''}`}
+            aria-label={settings.pinned ? 'Unpin overlay' : 'Pin overlay'}
+            title={settings.pinned ? 'Pinned' : 'Pin'}
+            onClick={() => void window.ytm.setPinned(!settings.pinned)}
+          >
+            <IconPin />
+          </button>
+          <AvatarMenu
+            profile={profile}
+            open={menuOpen}
+            onToggle={() => setMenuOpen((v) => !v)}
+            onOpenSettings={() => setSettingsOpen(true)}
+          />
         </div>
 
         {settingsOpen && (

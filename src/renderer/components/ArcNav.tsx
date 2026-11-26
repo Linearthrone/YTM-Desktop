@@ -11,7 +11,7 @@ export function ArcNav({ active, onSelect }: Props) {
     <nav className="arc-nav no-drag" aria-label="Library shelves">
       <button
         type="button"
-        className={`arc-btn${active === 'listen-again' ? ' active' : ''}`}
+        className={`neon-chip arc-btn${active === 'listen-again' ? ' active' : ''}`}
         title="Listen Again"
         aria-label="Listen Again"
         onClick={() => onSelect('listen-again')}
@@ -20,7 +20,7 @@ export function ArcNav({ active, onSelect }: Props) {
       </button>
       <button
         type="button"
-        className={`arc-btn${active === 'quick-picks' ? ' active' : ''}`}
+        className={`neon-chip arc-btn${active === 'quick-picks' ? ' active' : ''}`}
         title="Quick Picks"
         aria-label="Quick Picks"
         onClick={() => onSelect('quick-picks')}
@@ -29,7 +29,7 @@ export function ArcNav({ active, onSelect }: Props) {
       </button>
       <button
         type="button"
-        className={`arc-btn${active === 'forgotten-faves' ? ' active' : ''}`}
+        className={`neon-chip arc-btn${active === 'forgotten-faves' ? ' active' : ''}`}
         title="Forgotten Favorites"
         aria-label="Forgotten Favorites"
         onClick={() => onSelect('forgotten-faves')}
@@ -38,7 +38,7 @@ export function ArcNav({ active, onSelect }: Props) {
       </button>
       <button
         type="button"
-        className={`search-fab${active === 'search' ? ' active' : ''}`}
+        className={`neon-chip search-fab${active === 'search' ? ' active' : ''}`}
         title="Search"
         aria-label="Search"
         onClick={() => onSelect('search')}

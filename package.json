@@ -1,6 +1,6 @@
 {
   "name": "ytm-desktop",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Xbox Game Bar–style YouTube Music desktop overlay",
   "main": "./out/main/index.js",
   "author": "Linearthrone",
